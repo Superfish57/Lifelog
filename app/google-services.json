@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "686062836376",
+    "firebase_url": "https://lifelog-86e46.firebaseio.com",
+    "project_id": "lifelog-86e46",
+    "storage_bucket": "lifelog-86e46.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686062836376:android:013d8da0ff759d0d",
+        "android_client_info": {
+          "package_name": "com.suckow.lifelog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686062836376-2en9cfstihphgmujhpnfltccamsr37tg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.suckow.lifelog",
+            "certificate_hash": "fcc8209f32567942557f2e950527183e99443d37"
+          }
+        },
+        {
+          "client_id": "686062836376-coeq8jm0o6qdvjqachhsc5djqo7o6o6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhAfyJj0epdqz7G6JnGhFLzB2dxGoYvoo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "686062836376-coeq8jm0o6qdvjqachhsc5djqo7o6o6u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
