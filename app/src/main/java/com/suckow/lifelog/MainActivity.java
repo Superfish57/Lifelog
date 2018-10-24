@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.suckow.lifelog.Activity.SignInActivity;
 import com.suckow.lifelog.model.logbook;
 import com.suckow.lifelog.presenter.LogbookManager;
 
@@ -93,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-       if(user == null) {
-           Toast.makeText(this, "Signing in...", Toast.LENGTH_SHORT).show();
-           signIn();
-       } else {
-           subscribeLogs();
-       }
+        if (user == null) {
+            Toast.makeText(this, "Signing in...", Toast.LENGTH_SHORT).show();
+            signIn();
+        } else {
+            subscribeLogs();
+        }
 
     }
 
@@ -129,10 +130,12 @@ public class MainActivity extends AppCompatActivity {
                 // response.getError().getErrorCode() and handle the error.
                 // ...
                 Toast.makeText(this, "Sign in error", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Firebase Sign in error: " + response.getError().getLocalizedMessage());
             }
         }
     }
 
+    @SuppressLint("CheckResult")
     private void subscribeLogs() {
         logbookManager.subscribeLogs()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -145,15 +148,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void signIn() {
 
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.GoogleBuilder().build());
-
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
+        Intent intent = new Intent(this, SignInActivity.class);
+        startActivity(intent);
 
     }
 
@@ -165,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
 
     private void newLogbook() {
@@ -195,65 +190,72 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    class logbookAdapter extends RecyclerView.Adapter<logbookAdapter.ViewHolder> {
+        private List<logbook> mDataset;
 
-}
+        // Provide a reference to the views for each data item
+        // Complex data items may need more than one view per item, and
+        // you provide access to all the views for a data item in a view holder
+
+        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Tapped: " + v.toString(), Toast.LENGTH_SHORT);
+            }
+        };
 
 
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            // each data item is just a string in this case
+            public TextView title;
+            public TextView date;
 
-class logbookAdapter extends RecyclerView.Adapter<logbookAdapter.ViewHolder> {
-    private List<logbook> mDataset;
+            public ViewHolder(View v) {
+                super(v);
+                title = v.findViewById(R.id.bookTitleText);
+                date = v.findViewById(R.id.updateValueText);
+            }
+        }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public TextView title;
-        public TextView date;
-        public ViewHolder(View v) {
-            super(v);
-            title = v.findViewById(R.id.bookTitleText);
-            date = v.findViewById(R.id.updateValueText);
+        // Provide a suitable constructor (depends on the kind of dataset)
+        logbookAdapter(List<logbook> myDataset) {
+            mDataset = myDataset;
+        }
+
+        // Create new views (invoked by the layout manager)
+        @Override
+        public logbookAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                            int viewType) {
+            // create a new view
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.logbook_item_card, parent, false);
+            ViewHolder vh = new ViewHolder(v);
+            return vh;
+        }
+
+
+        // Replace the contents of a view (invoked by the layout manager)
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            // - get element from your dataset at this position
+            // - replace the contents of the view with that element
+
+            holder.title.setText(mDataset.get(position).getBookTitle());
+            holder.date.setText(mDataset.get(position).getLastUpdate());
+
+        }
+
+        // Return the size of your dataset (invoked by the layout manager)
+        @Override
+        public int getItemCount() {
+            return mDataset.size();
+        }
+
+        public void updateData(List data) {
+            this.mDataset = data;
+            notifyDataSetChanged();
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public logbookAdapter(List<logbook> myDataset) {
-        mDataset = myDataset;
-    }
-
-    // Create new views (invoked by the layout manager)
-    @Override
-    public logbookAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                        int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.logbook_item_card, parent, false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
-    }
-
-
-
-    // Replace the contents of a view (invoked by the layout manager)
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-
-        holder.title.setText(mDataset.get(position).getBookTitle());
-        holder.date.setText(mDataset.get(position).getLastUpdate());
-
-    }
-
-    // Return the size of your dataset (invoked by the layout manager)
-    @Override
-    public int getItemCount() {
-        return mDataset.size();
-    }
-
-    public void updateData(List data) {
-        this.mDataset = data;
-        notifyDataSetChanged();
-    }
 }
